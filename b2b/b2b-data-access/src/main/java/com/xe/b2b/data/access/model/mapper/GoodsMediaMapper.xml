@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xe.b2b.data.access.dao.GoodsMediaDao">
+    <resultMap id="baseGoodsMediaMap" type="GoodsMediaEntity">
+        <id column="id" property="id" />
+        <result column="goods_number" property="goodsNumber" />
+        <result column="media_path" property="mediaPath" />
+        <result column="is_active" property="isActive" />
+        <result column="created" property="create_date" />
+        <result column="lastUpdate" property="last_update" />
+        <result column="createdBy" property="created_by" />
+        <result column="updatedBy" property="updated_by" />
+    </resultMap>
+    
+    <select id="selectByGoodsNumber" resultMap="baseGoodsMediaMap">
+        <![CDATA[
+            SELECT * FROM b2b_goods_media WHERE goods_number = #{goodsNumber}
+        ]]>
+    </select>
+
+     <insert id="insert" parameterType="ArrayList" >
+           insert into b2b_goods_media
+           (goods_number, mediaPath)
+           values
+            <foreach collection ="list" item="item" index= "index" separator =",">
+                (
+                #{item.goods_number}, #{item.media_path}
+                )
+            </foreach>
+     </insert >
+</mapper>

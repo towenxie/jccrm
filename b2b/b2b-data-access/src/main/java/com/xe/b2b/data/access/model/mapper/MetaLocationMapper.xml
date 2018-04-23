@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xe.b2b.data.access.dao.MetaLocationDao">
+    <resultMap id="baseMetaLocationMap" type="MetaLocationEntity">
+        <result column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="country_name" property="countryName" />
+        <result column="state_name" property="stateName" />
+        <result column="city_name" property="cityName" />
+        <result column="region_name" property="regionName" />
+        <result column="whole_name" property="wholeName" />
+        <result column="level" property="level" />
+        <result column="parent_id" property="parentId" />
+        <result column="parent_code" property="parentCode" />
+        <result column="language" property="language" />
+        <result column="is_enabled" property="isActive" />
+        <result column="long" property="longitude" />
+        <result column="lat" property="latitude" />
+    </resultMap>
+    
+    <select id="getMetaLocations" resultMap="baseMetaLocationMap">
+        <![CDATA[
+            SELECT * FROM `meta_location` WHERE level = #{level} AND code like'%CN%' AND is_enabled = 1
+        ]]>
+    </select>
+
+    <select id="getLocationById" resultMap="baseMetaLocationMap">
+        <![CDATA[
+            SELECT * FROM `meta_location` WHERE id = #{id} AND code like'%CN%' AND is_enabled = 1
+        ]]>
+    </select>
+
+</mapper>

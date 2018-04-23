@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xe.b2b.data.access.dao.MenuDao">
+  <resultMap id="baseMenuMap" type="com.xe.b2b.data.access.model.MenuEntity">
+    <id column="id" property="id" />
+    <result column="name" property="name" />
+    <result column="action" property="action" />
+    <result column="sort" property="sort" />
+    <result column="code" property="code" />
+    <result column="parent_code" property="parentCode" />
+    <result column="icon" property="icon" />
+    <result column="is_active" property="isActive" />
+    <result column="create_date" property="created" />
+    <result column="last_update" property="lastUpdate" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+<!--     <association property="menu" column="parent_code" select="com.xe.b2b.data.access.dao.MenuDao.selectByPrimaryKey"/> -->
+    <collection property="menus" column="code" select="com.xe.b2b.data.access.dao.MenuDao.selectEffectiveByParent"/>
+  </resultMap>
+
+  <resultMap id="SonResultMap" type="com.xe.b2b.data.access.model.MenuEntity" extends="baseMenuMap">
+    <collection property="menus" column="code" select="com.xe.b2b.data.access.dao.MenuDao.selectEffectiveByParent"/>
+  </resultMap>
+
+</mapper>

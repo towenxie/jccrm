@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xe.b2b.data.access.dao.OrderPriceDao">
+
+    <resultMap id="baseOrderPriceMap" type="OrderPriceEntity">
+        <result column="id" property="id" />
+        <result column="order_number" property="orderNumber" />
+        <result column="username" property="username" />
+        <result column="org_total_price" property="orlTotalPrice" />
+        <result column="total_price" property="totalPrice" />
+        <result column="deposit_price" property="depositPrice" />
+        <result column="send_price" property="sendPrice" />
+        <result column="replace_profit" property="replaceProfit" />
+        <result column="reason_code" property="reasonName" />
+        <result column="real_price" property="realPrice" />
+		<result column="refund_price" property="refundPrice" />
+        <result column="refund_detail" property="refundDetail" />
+		<result column="is_active" property="isActive" />
+		<result column="create_date" property="created" />
+		<result column="created_by" property="createdBy" />
+		<result column="last_update" property="lastUpdate" />
+		<result column="updated_by" property="updatedBy" />
+		<association column="order_number" property="hasDaikuang" select="com.xe.b2b.data.access.dao.OrderDao.getHasDaikuang"/>
+        <association column="created_by" property="user" select="com.xe.b2b.data.access.dao.UserDao.selectByPrimaryKey"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="OrderPriceEntity"> 
+        <![CDATA[
+	        INSERT INTO `b2b_order_price` (
+	         `order_number`, 
+	         `username`,
+	         `org_total_price`,
+             `deposit_price`,
+	         `total_price`,
+	         `send_price`,
+			 `replace_profit`,
+			 `reason_code`,
+			 `real_price`,
+			 `refund_price`,
+             `refund_detail`,
+	         `create_date`,
+	         `created_by`,
+	         `updated_by`
+	        )
+	        VALUES (
+	         #{orderNumber},
+	         #{username}, 
+	         #{orlTotalPrice},
+             #{depositPrice}, 
+	         #{totalPrice}, 
+	         #{sendPrice},
+			 #{replaceProfit},
+			 #{reasonName},
+			 #{realPrice},
+			 #{refundPrice},
+             #{refundDetail},
+	         #{created},
+	         #{createdBy},
+	         #{updatedBy}
+	         )
+         ]]>
+    </insert>
+
+    <select id="selectByPage" resultMap="baseOrderPriceMap">
+        SELECT *
+        FROM b2b_order_price
+        WHERE is_active = 1
+        <if test="params.orderNumber !=null ">AND order_number =#{params.orderNumber}</if>
+        <if test="params.createdBy !=null ">AND created_by =#{params.createdBy}</if>
+        <if test="params.reasonName !=null ">AND reason_code =#{params.reasonName}
+        </if>
+        <if test="params.startDate!=null and params.endDate!=null">and create_date between #{params.startDate} and #{params.endDate}</if>
+        <if test="params.startDate!=null and params.endDate==null">and create_date &gt; #{params.startDate}</if>
+        <if test="params.startDate==null and params.endDate!=null">and create_date &lt; #{params.endDate}</if>
+        ORDER BY id desc
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="countByPage" resultType="java.lang.Integer">
+        select count(*)
+        FROM b2b_order_price
+        WHERE is_active = 1
+        <if test="params.orderNumber !=null ">AND order_number =#{params.orderNumber}</if>
+        <if test="params.createdBy !=null ">AND created_by =#{params.createdBy}</if>
+        <if test="params.reasonName !=null ">AND reason_code =#{params.reasonName}
+        </if>
+        <if test="params.startDate!=null and params.endDate!=null">and create_date between #{params.startDate} and #{params.endDate}</if>
+        <if test="params.startDate!=null and params.endDate==null">and create_date &gt; #{params.startDate}</if>
+        <if test="params.startDate==null and params.endDate!=null">and create_date &lt; #{params.endDate}</if>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="baseOrderPriceMap">
+        <![CDATA[
+            SELECT *
+            FROM b2b_order_price
+            WHERE is_active = 1
+            and order_number = #{id}
+        ]]>
+    </select>
+    <update id="isActiveByPrimaryKey" parameterType="OrderPriceEntity" >
+        <![CDATA[
+            update b2b_order_price
+            set is_active = #{isActive}
+            where order_number = #{orderNumber}
+        ]]>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="OrderPriceEntity" >
+        update b2b_order_price
+        <set>
+	        <if test="sendPrice != null and sendPrice !=0">
+	               send_price = #{sendPrice}, 
+	        </if>
+	        <if test="replaceProfit != null and replaceProfit !=0">
+	               replace_profit = #{replaceProfit}, 
+	        </if>
+	        <if test="reasonName != null and reasonName !=''">
+	               reason_code = #{reasonName}, 
+	        </if>
+            <if test="refundDetail != null and refundDetail !=''">
+                   refund_detail = #{refundDetail}, 
+            </if>
+            <if test="refundPrice != null and refundPrice !=0">
+                   refund_price = #{refundPrice}, 
+            </if>
+	        <if test="updatedBy != null and updatedBy !=''">
+	               updated_by = #{updatedBy}, 
+	        </if>
+        </set>
+        where order_number = #{orderNumber}
+    </update>
+
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xe.b2b.data.access.dao.OrderStatusLogDao">
+	<resultMap id="baseStatusLogMap" type="OrderStatusLogEntity">
+		<result column="id" property="id" />
+		<result column="order_number" property="orderNumber" />
+		<result column="order_status_code" property="orderStatusCode" />
+		<result column="remark" property="remark" />
+		<result column="is_active" property="isActive" />
+		<result column="last_update" property="lastUpdate" />
+		<result column="updated_by" property="updatedBy" />
+        <association column="order_status_code" property="status" select="com.xe.b2b.data.access.dao.OrderStatusDao.selectByPrimaryKey"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="OrderStatusLogEntity"> 
+        <![CDATA[
+            INSERT INTO `b2b_order_status_log`
+             (`order_number`, `order_status_code`, `remark`, `updated_by`)
+            VALUES (#{orderNumber}, #{orderStatusCode}, #{remark}, #{updatedBy})
+        ]]>
+    </insert>
+    
+    <select id="getOrderStatusLogs" resultMap="baseStatusLogMap">
+        <![CDATA[
+            SELECT *
+            FROM b2b_order_status_log
+            WHERE is_active = 1
+            and order_number = #{orderNumber}
+            order by last_update asc
+        ]]>
+    </select>
+    
+    <select id="getNewOrderStatusLog" resultMap="baseStatusLogMap">
+        <![CDATA[
+            SELECT *
+            FROM b2b_order_status_log
+            WHERE is_active = 1
+            and order_number = #{orderNumber}
+            order by last_update desc
+			limit 1
+        ]]>
+    </select>
+
+
+</mapper>

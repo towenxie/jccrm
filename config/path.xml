@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/upload"  
+	docBase="/home/ubuntu/images" 
+	privileged="true" 
+	reloadable="false" 
+	debug="0"  
+	workDir=""/>

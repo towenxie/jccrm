@@ -1,0 +1,10 @@
+INSERT INTO `meta_order_status` (`code`, `name`) VALUES ('pending', '待支付');
+INSERT INTO `meta_order_status` (`code`, `name`) VALUES ('processing', '支付处理中');
+INSERT INTO `meta_order_status` (`code`, `name`) VALUES ('paid', '已支付，待发货');
+INSERT INTO `meta_order_status` (`code`, `name`) VALUES ('shipped', '已发货，待收货');
+INSERT INTO `meta_order_status` (`code`, `name`) VALUES ('completed', '已完成，签收');
+INSERT INTO `meta_order_status` (`code`, `name`) VALUES ('canceled', '已取消');
+INSERT INTO `meta_order_status` (`code`, `name`) VALUES ('rejected', '拒收');
+INSERT INTO `meta_order_status` (`code`, `name`) VALUES ('refunding', '退货，退款处理中');
+INSERT INTO `meta_order_status` (`code`, `name`) VALUES ('refunded', '已退货，退款');
+INSERT INTO `meta_order_status` (`code`, `name`) VALUES ('expired', '已过期');

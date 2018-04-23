@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xe.b2b.data.access.dao.OrderDao">
+
+    <resultMap id="baseOrderMap" type="OrderEntity">
+        <result column="id" property="id" />
+        <result column="order_number" property="orderNumber" />
+        <result column="order_status_code" property="orderStatusCode" />
+        <result column="total_price" property="totalPrice" />
+        <result column="deposit_price" property="depositPrice" />
+        <result column="dept_code" property="deptCode" />
+        <result column="has_bill" property="hasBill" />
+        <result column="has_dingjin" property="hasDingjin" />
+        <result column="can_send" property="canSend" />
+        <result column="has_daikuang" property="hasDaikuang" />
+        <result column="has_refund" property="hasRund" />
+		<result column="username" property="username" />
+		<result column="phone" property="phone" />
+		<result column="location_id" property="locationId" />
+		<result column="address" property="address" />
+		<result column="full_address" property="fullAddress" />
+		<result column="express_number" property="expressNumber" />
+		<result column="express_company_code" property="expressCompanyCode" />
+		<result column="payment_code" property="paymentCode" />
+		<result column="remark" property="remark" />
+		<result column="is_active" property="isActive" />
+		<result column="create_date" property="created" />
+		<result column="created_by" property="createdBy" />
+		<result column="last_update" property="lastUpdate" />
+		<result column="updated_by" property="updatedBy" />
+        <result column="package_by" property="packageBy" />
+        <result column="deliver_by" property="deliverBy" />
+        <association column="created_by" property="user" select="com.xe.b2b.data.access.dao.UserDao.selectByPrimaryKey"/>
+        <association column="location_Id" property="locations" select="com.xe.b2b.data.access.dao.MetaLocationDao.getLocationById"/>
+        <association column="payment_code" property="payment" select="com.xe.b2b.data.access.dao.PaymentDao.selectByPrimaryKey"/>
+        <association column="express_company_code" property="express" select="com.xe.b2b.data.access.dao.ExpressDao.selectByPrimaryKey"/>
+		<association column="dept_code" property="dept" select="com.xe.b2b.data.access.dao.DeptDao.selectByPrimaryKey"/>
+		<association column="order_status_code" property="orderStatus" select="com.xe.b2b.data.access.dao.OrderStatusDao.selectByPrimaryKey"/>
+        <collection column="order_number" property="goods" javaType="java.util.ArrayList" ofType="OrderGoodsEntity" select="com.xe.b2b.data.access.dao.OrderGoodsDao.selectByOrderNumber"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="OrderEntity"> 
+        <![CDATA[
+	        INSERT INTO `b2b_order` (
+	         `order_number`, 
+	         `order_status_code`,
+	         `total_price`,
+             `deposit_price`,
+	         `dept_code`,
+	         `has_bill`,
+			 `username`,
+			 `phone`,
+			 `location_id`,
+			 `address`,
+			 `full_address`,
+			 `express_company_code`,
+			 `payment_code`,
+	         `remark`,
+	         `create_date`,
+	         `created_by`,
+	         `updated_by`
+	        )
+	        VALUES (
+	         #{orderNumber},
+	         #{orderStatusCode}, 
+	         #{totalPrice},
+             #{depositPrice}, 
+	         #{deptCode}, 
+	         #{hasBill},
+			 #{username},
+			 #{phone},
+			 #{locationId},
+			 #{address},
+			 #{fullAddress},
+			 #{expressCompanyCode},
+			 #{paymentCode},
+	         #{remark},
+	         #{created},
+	         #{createdBy},
+	         #{updatedBy}
+	         )
+         ]]>
+    </insert>
+
+    <select id="selectByPage" resultMap="baseOrderMap">
+        SELECT *
+        FROM b2b_order bo
+        <if test="params.parent !=null ">
+          inner join (select WORK_ID from b2b_user where FIND_IN_SET ( WORK_ID,  getChildeIds(#{params.parent}))) sub
+          on bo.created_by = sub.WORK_ID 
+        </if>
+        <if test="params.createdBy !=null ">
+          inner join (select WORK_ID, username from b2b_user) bu
+          on bo.created_by = bu.WORK_ID 
+          and bu.username = #{params.createdBy}
+        </if>
+        WHERE bo.is_active = 1
+        <if test="params.canSend != null">AND bo.can_send = #{params.canSend}</if>
+        <if test="params.username !=null ">AND bo.username =#{params.username}</if>
+        <if test="params.orderNumber !=null ">AND bo.order_number =#{params.orderNumber}</if>
+        <if test="params.deptCode !=null ">AND bo.dept_code =#{params.deptCode}</if>
+        <if test="params.paymentCode !=null ">AND bo.payment_code =#{params.paymentCode}</if>
+        <if test="params.expressNumber !=null ">AND bo.express_number =#{params.expressNumber}</if>
+        <if test="params.orderStatusCode !=null ">AND bo.order_status_code =#{params.orderStatusCode}</if>
+        <if test="params.createdById !=null ">AND bo.created_by =#{params.createdById}</if>
+        <if test="params.startDate!=null and params.endDate!=null">and bo.create_date between #{params.startDate} and #{params.endDate}</if>
+        <if test="params.startDate!=null and params.endDate==null">and bo.create_date &gt; #{params.startDate}</if>
+        <if test="params.startDate==null and params.endDate!=null">and bo.create_date &lt; #{params.endDate}</if>
+        ORDER BY id desc
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="countByPage" resultType="java.lang.Integer">
+        select count(*)
+        FROM b2b_order bo
+        <if test="params.parent !=null ">
+          inner join (select WORK_ID from b2b_user where FIND_IN_SET ( WORK_ID,  getChildeIds(#{params.parent}))) sub
+          on bo.created_by = sub.WORK_ID 
+        </if>
+        <if test="params.createdBy !=null ">
+          inner join (select WORK_ID, username from b2b_user) bu
+          on bo.created_by = bu.WORK_ID 
+          and bu.username = #{params.createdBy}
+        </if>
+        WHERE bo.is_active = 1
+        <if test="params.canSend != null">AND bo.can_send = #{params.canSend}</if>
+        <if test="params.username !=null ">AND bo.username =#{params.username}</if>
+        <if test="params.orderNumber !=null ">AND bo.order_number =#{params.orderNumber}</if>
+        <if test="params.deptCode !=null ">AND bo.dept_code =#{params.deptCode}</if>
+        <if test="params.paymentCode !=null ">AND bo.payment_code =#{params.paymentCode}</if>
+        <if test="params.expressNumber !=null ">AND bo.express_number =#{params.expressNumber}</if>
+        <if test="params.orderStatusCode !=null ">AND bo.order_status_code =#{params.orderStatusCode}</if>
+        <if test="params.createdById !=null ">AND bo.created_by =#{params.createdById}</if>
+        <if test="params.startDate!=null and params.endDate!=null">and bo.create_date between #{params.startDate} and #{params.endDate}</if>
+        <if test="params.startDate!=null and params.endDate==null">and bo.create_date &gt; #{params.startDate}</if>
+        <if test="params.startDate==null and params.endDate!=null">and bo.create_date &lt; #{params.endDate}</if>
+    </select>
+
+    <select id="getTotalPriceByPage" resultType="java.lang.Float">
+        SELECT sum(total_price)
+        FROM b2b_order bo
+        <if test="params.parent !=null ">
+          inner join (select WORK_ID from b2b_user where FIND_IN_SET ( WORK_ID,  getChildeIds(#{params.parent}))) sub
+          on bo.created_by = sub.WORK_ID 
+        </if>
+        <if test="params.createdBy !=null ">
+          inner join (select WORK_ID, username from b2b_user) bu
+          on bo.created_by = bu.WORK_ID 
+          and bu.username = #{params.createdBy}
+        </if>
+        WHERE bo.is_active = 1
+        <if test="params.canSend != null">AND bo.can_send = #{params.canSend}</if>
+        <if test="params.username !=null ">AND bo.username =#{params.username}</if>
+        <if test="params.orderNumber !=null ">AND bo.order_number =#{params.orderNumber}</if>
+        <if test="params.deptCode !=null ">AND bo.dept_code =#{params.deptCode}</if>
+        <if test="params.paymentCode !=null ">AND bo.payment_code =#{params.paymentCode}</if>
+        <if test="params.expressNumber !=null ">AND bo.express_number =#{params.expressNumber}</if>
+        <if test="params.orderStatusCode !=null ">AND bo.order_status_code =#{params.orderStatusCode}</if>
+        <if test="params.createdById !=null ">AND bo.created_by =#{params.createdById}</if>
+        <if test="params.startDate!=null and params.endDate!=null">and bo.create_date between #{params.startDate} and #{params.endDate}</if>
+        <if test="params.startDate!=null and params.endDate==null">and bo.create_date &gt; #{params.startDate}</if>
+        <if test="params.startDate==null and params.endDate!=null">and bo.create_date &lt; #{params.endDate}</if>
+    </select>
+    
+    <select id="selectByPrimaryKey" resultMap="baseOrderMap">
+        <![CDATA[
+            SELECT *
+            FROM b2b_order
+            WHERE is_active = 1
+            and order_number = #{id}
+        ]]>
+    </select>
+
+    <select id="selectById" resultMap="baseOrderMap">
+        <![CDATA[
+            SELECT *
+            FROM b2b_order
+            WHERE is_active = 1
+            and id = #{id}
+        ]]>
+    </select>
+
+    <select id="getHasDaikuang" resultType="java.lang.Boolean">
+        <![CDATA[
+            SELECT has_daikuang
+            FROM b2b_order
+            WHERE order_number = #{orderNumber}
+        ]]>
+    </select>
+    
+    <select id="selectByCreatedBy" resultMap="baseOrderMap">
+        <![CDATA[
+            SELECT *
+            FROM b2b_order
+            WHERE is_active = 1
+            and created_by = #{createdBy}
+        ]]>
+    </select>
+    
+    <update id="updateByPrimaryKeySelective" parameterType="OrderEntity" >
+        update b2b_order
+        <set>
+	        <if test="orderStatusCode != null and orderStatusCode !=''">
+	               order_status_code = #{orderStatusCode}, 
+	        </if>
+	        <if test="paymentCode != null and paymentCode !=''">
+	               payment_code = #{paymentCode}, 
+	        </if>
+	        <if test="expressNumber != null and expressNumber !=''">
+	               express_number = #{expressNumber}, 
+	        </if>
+            <if test="hasBill != null">
+                   has_bill = #{hasBill}, 
+            </if>
+	        <if test="updatedBy != null and updatedBy !=''">
+	               updated_by = #{updatedBy}, 
+	        </if>
+            <if test="packageBy != null and packageBy !=''">
+                   package_by = #{packageBy}, 
+            </if>
+            <if test="deliverBy != null and deliverBy !=''">
+                   deliver_by = #{deliverBy}, 
+            </if>
+            <if test="hasDingjin != null and hasDingjin !=false">
+                   has_dingjin = #{hasDingjin}, 
+            </if>
+            <if test="canSend != null and canSend !=false">
+                   can_send = #{canSend}, 
+            </if>
+            <if test="hasDaikuang != null and hasDaikuang !=false">
+                   has_daikuang = #{hasDaikuang}, 
+            </if>
+            <if test="hasRund != null and hasRund !=false">
+                   has_refund = #{hasRund}, 
+            </if>
+        </set>
+        where order_number = #{orderNumber}
+    </update>
+    <update id="isActiveByPrimaryKey" parameterType="OrderEntity" >
+        <![CDATA[
+            update b2b_order
+            set is_active = #{isActive}
+            where order_number = #{orderNumber}
+        ]]>
+    </update>
+</mapper>

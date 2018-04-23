@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xe.b2b.data.access.dao.UserRoleDao">
+    <resultMap id="baseUserRoleMap" type="UserRoleEntity">
+        <id column="id" property="id"/>
+        <result column="WORK_ID" property="workId"/>
+        <result column="role_code" property="roleCode"/>
+		<result column="is_active" property="isActive" />
+		<result column="create_date" property="created" />
+		<result column="created_by" property="createdBy" />
+		<result column="last_update" property="lastUpdate" />
+		<result column="updated_by" property="updatedBy" />
+        <association column="role_code" property="role" select="com.xe.b2b.data.access.dao.RoleDao.selectByPrimaryKey"/>
+    </resultMap>
+
+    <select id="selectByWorkId" resultMap="baseUserRoleMap">
+        <![CDATA[
+	        select *
+	        from b2b_user_role
+	        where WORK_ID = #{WORK_ID} AND is_active = 1
+        ]]>
+    </select>
+
+    <select id="selectCodesByWorkId" resultType="String">
+        <![CDATA[
+            select role_code
+            from b2b_user_role
+            where WORK_ID = #{WORK_ID} AND is_active = 1
+        ]]>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="baseUserRoleMap">
+        <![CDATA[
+	        select *
+	        from b2b_user_role
+	        where id = #{id} AND is_active = 1
+        ]]>
+    </select>
+
+    <insert id="insert" parameterType="UserRoleEntity">
+        insert into b2b_user_role (WORK_ID, role_code, create_date,created_by,updated_by)
+        values (#{workId}, #{roleCode}, #{created}, #{createdBy},#{updatedBy})
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="UserRoleEntity">
+        update b2b_user_role
+        <set>
+            <if test="workId != null and workId !=''">
+                WORK_ID = #{workId},
+            </if>
+            <if test="roleCode != null and roleCode !=''">
+                role_code = #{roleCode},
+            </if>
+            <if test="updatedBy != null and updatedBy !=''">
+                updated_by = #{updatedBy},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="isActiveByPrimaryKey" parameterType="UserRoleEntity" >
+        <![CDATA[
+	        update b2b_user_role
+	        set is_active = #{isActive}, updated_by = #{updatedBy}
+	        where work_id = #{workId}
+	        and role_code = #{roleCode}
+        ]]>
+    </update>
+</mapper>

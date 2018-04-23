@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    <Properties>
+        <Property name="log-path">C:/logs</Property>
+        <Property name="log-backup-path">C:/logs/backup</Property>
+    </Properties>
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%highlight{%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%-5level] [%C: %M] - %msg%n}{FATAL=Red, ERROR=Magenta, WARN=Yellow, INFO=Green, DEBUG=Cyan, TRACE=White}"/>
+        </Console>
+        <RollingRandomAccessFile name="file-debug-log" fileName="${log-path}/jccrm-debug.log"
+                                 filePattern="${log-backup-path}/jccrm-debug-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%-5level] [%C{1.}: %M] - %msg%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy
+                        size="50MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="15"/>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="file-info-log" fileName="${log-path}/jccrm-info.log"
+                                 filePattern="${log-backup-path}/jccrm-info-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%-5level] [%C{1.}: %M] - %msg%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy
+                        size="20MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="15"/>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="file-error-log" fileName="${log-path}/jccrm-error.log"
+                                 filePattern="${log-backup-path}/jccrm-error-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%-5level] [%C{1.}: %M] - %msg%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy
+                        size="5MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="15"/>
+        </RollingRandomAccessFile>
+    </appenders>
+    <loggers>
+        <root level="DEBUG">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="file-debug-log" />
+            <appender-ref ref="file-info-log" level="info" />
+            <appender-ref ref="file-error-log" level="error" />
+        </root>
+    </loggers>
+</Configuration>

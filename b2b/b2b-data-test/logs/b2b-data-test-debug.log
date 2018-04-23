@@ -1,0 +1,38 @@
+2017-08-22 15:47:04.586 [main] [ERROR] [c.x.b.d.b.s.i.UserServiceImpl: insert] - 
+### Error updating database.  Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`email`, `dept_code`, `REMARKS`, `create_date`, `created_by`, `updated_by`)
+    ' at line 2
+### The error may involve com.xe.b2b.data.access.dao.UserDao.insert-Inline
+### The error occurred while setting parameters
+### SQL: INSERT INTO `b2b_user` (`SORT_WORK_ID`, `WORK_ID`,`PARENT_WORK_ID`, `USERNAME`, `PASSWORD`, `SEX`, `phone`         `email`, `dept_code`, `REMARKS`, `create_date`, `created_by`, `updated_by`)          VALUES (?, ?,  ?, ?, ?, ?, `phone`,           `email`, `deptCode`, `REMARKS`, `created`, `createdBy`, `updatedBy`)
+### Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`email`, `dept_code`, `REMARKS`, `create_date`, `created_by`, `updated_by`)
+    ' at line 2
+; bad SQL grammar []; nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`email`, `dept_code`, `REMARKS`, `create_date`, `created_by`, `updated_by`)
+    ' at line 2
+2017-08-22 15:48:39.000 [main] [ERROR] [c.x.b.d.b.s.i.UserServiceImpl: insert] - nested exception is org.apache.ibatis.reflection.ReflectionException: There is no getter for property named 'REMARKS' in 'class com.xe.b2b.data.access.model.UserEntity'
+2017-08-22 15:51:05.632 [main] [ERROR] [c.x.b.d.b.s.i.UserServiceImpl: insert] - 
+### Error updating database.  Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`email`, `dept_code`, `remark`, `create_date`, `created_by`, `updated_by`)
+     ' at line 2
+### The error may involve com.xe.b2b.data.access.dao.UserDao.insert-Inline
+### The error occurred while setting parameters
+### SQL: INSERT INTO `b2b_user` (`SORT_WORK_ID`, `WORK_ID`,`PARENT_WORK_ID`, `USERNAME`, `PASSWORD`, `SEX`, `phone`         `email`, `dept_code`, `remark`, `create_date`, `created_by`, `updated_by`)          VALUES (?, ?,  ?, ?, ?, ?, ?,           ?, ?, ?, ?, ?, ?)
+### Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`email`, `dept_code`, `remark`, `create_date`, `created_by`, `updated_by`)
+     ' at line 2
+; bad SQL grammar []; nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`email`, `dept_code`, `remark`, `create_date`, `created_by`, `updated_by`)
+     ' at line 2
+2017-08-22 15:52:08.323 [main] [ERROR] [c.x.b.d.b.s.i.UserServiceImpl: insert] - 
+### Error updating database.  Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`email`, `dept_code`, `remark`, `create_date`, `created_by`, `updated_by`)
+     ' at line 2
+### The error may involve com.xe.b2b.data.access.dao.UserDao.insert-Inline
+### The error occurred while setting parameters
+### SQL: INSERT INTO `b2b_user` (`SORT_WORK_ID`, `WORK_ID`,`PARENT_WORK_ID`, `USERNAME`, `PASSWORD`, `SEX`, `phone`         `email`, `dept_code`, `remark`, `create_date`, `created_by`, `updated_by`)          VALUES (?, ?,  ?, ?, ?, ?, ?,           ?, ?, ?, ?, ?, ?)
+### Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`email`, `dept_code`, `remark`, `create_date`, `created_by`, `updated_by`)
+     ' at line 2
+; bad SQL grammar []; nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`email`, `dept_code`, `remark`, `create_date`, `created_by`, `updated_by`)
+     ' at line 2
+2017-08-22 16:49:04.823 [main] [ERROR] [c.x.b.d.b.s.i.UserServiceImpl: get] - nested exception is org.apache.ibatis.exceptions.PersistenceException: 
+### Error querying database.  Cause: java.lang.IllegalArgumentException: Mapped Statements collection does not contain value for com.xe.b2b.data.access.dao.UserDao.selectByUser
+### The error may exist in file [D:\angmentum\other\jccrm-1.0\jccrm-1.0\b2b\b2b-data-access\target\classes\com\xe\b2b\data\access\model\mapper\UserMapper.xml]
+### The error may involve com.xe.b2b.data.access.dao.UserDao.selectByPrimaryKey
+### The error occurred while handling results
+### SQL: SELECT *             FROM b2b_user          where work_id = ?          AND is_active = 1
+### Cause: java.lang.IllegalArgumentException: Mapped Statements collection does not contain value for com.xe.b2b.data.access.dao.UserDao.selectByUser

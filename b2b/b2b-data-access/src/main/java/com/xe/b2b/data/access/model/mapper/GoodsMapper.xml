@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xe.b2b.data.access.dao.GoodsDao">
+
+    <resultMap id="baseGoodsMap" type="GoodsEntity">
+        <id column="id" property="id" />
+        <result column="goods_number" property="goodsNumber" />
+        <result column="name" property="name" />
+        <result column="price" property="price" />
+        <result column="unit" property="unit" />
+        <result column="location" property="location" />
+        <result column="producter" property="producter" />
+        <result column="remark" property="remark" />
+        <result column="is_active" property="isActive" />
+        <result column="create_date" property="created" />
+        <result column="last_update" property="lastUpdate" />
+        <result column="created_by" property="createdBy" />
+        <result column="updated_by" property="updatedBy" />
+        <association column="goods_number" property="stockNum" select="com.xe.b2b.data.access.dao.GoodsStockDao.selectStockNum"/>
+        <association column="goods_number" property="medias" select="com.xe.b2b.data.access.dao.GoodsMediaDao.selectByGoodsNumber"/>
+        <association column="goods_number" property="stocks" select="com.xe.b2b.data.access.dao.GoodsStockDao.selectByGoodsNumber"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="GoodsEntity"> 
+        <![CDATA[
+	        INSERT INTO `b2b_goods` (
+	         `goods_number`, 
+	         `name`,
+	         `price`,
+	         `unit`,
+	         `location`,
+	         `producter`,
+	         `remark`,
+	         `create_date`,
+	         `created_by`,
+	         `updated_by`
+	        )
+	        VALUES (
+	         #{goodsNumber},
+	         #{name}, 
+	         #{price},
+	         #{unit},
+	         #{location}, 
+	         #{producter},
+	         #{remark},
+	         #{created},
+	         #{createdBy},
+	         #{updatedBy}
+	         )
+         ]]>
+    </insert>
+
+    <select id="selectByPage" resultMap="baseGoodsMap">
+        SELECT  *
+        FROM b2b_goods
+        WHERE 1=1
+        <if test="params.goodsNumber !=null ">AND goods_number =#{params.goodsNumber}</if>
+        <if test="params.name !=null ">AND name =#{params.name}</if>
+        ORDER BY id desc
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="countByPage" resultType="java.lang.Integer">
+        select count(*)
+        FROM b2b_goods
+        WHERE 1=1
+        <if test="params.goodsNumber !=null ">AND goods_number =#{params.goodsNumber}</if>
+        <if test="params.name !=null ">AND name =#{params.name}</if>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="baseGoodsMap">
+        <![CDATA[
+            SELECT *
+            FROM b2b_goods
+            WHERE goods_number = #{id}
+        ]]>
+    </select>
+    <select id="getAllGoods" resultMap="baseGoodsMap">
+        <![CDATA[
+            SELECT *
+            FROM b2b_goods
+            WHERE is_active = 1
+        ]]>
+    </select>
+    
+    
+    <select id="selectGoodsName" resultType="String">
+        <![CDATA[
+            SELECT name
+            FROM b2b_goods
+            WHERE goods_number = #{id}
+        ]]>
+    </select>
+    
+    <update id="updateByPrimaryKeySelective" parameterType="GoodsEntity" >
+        update b2b_goods
+        <set>
+	        <if test="name != null and name !=''">
+	               name = #{name}, 
+	        </if>
+	        <if test="price != null and price !=0.0">
+	               price = #{price}, 
+	        </if>
+	        <if test="unit != null and unit !=''">
+	               unit = #{unit}, 
+	        </if>
+	        <if test="location != null and location !=''">
+	               location = #{location}, 
+	        </if>
+	        <if test="producter != null and producter !=''">
+	               producter = #{producter}, 
+	        </if>
+	        <if test="updatedBy != null and updatedBy !=''">
+	               updated_by = #{updatedBy}, 
+	        </if>
+	        <if test="remark != null and remark !=''">
+	               remark = #{remark}, 
+	        </if>
+        </set>
+        where goods_number = #{goodsNumber}
+    </update>
+
+    <update id="isActiveByPrimaryKey" parameterType="GoodsEntity" >
+        <![CDATA[
+	        update b2b_goods
+	        set is_active = #{isActive}
+	        where goods_number = #{goodsNumber}
+        ]]>
+    </update>
+   <delete id="deleteByPrimaryKey" parameterType="String">
+        <![CDATA[
+            delete from b2b_goods where id=#{id}
+        ]]>
+    </delete>
+</mapper>

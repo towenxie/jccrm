@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xe.b2b.data.access.dao.OrderReportDao">
+  <resultMap id="baseOrderReportMap" type="OrderReportEntity">
+    <result column="g_code" property="code" />
+    <result column="g_parent_code" property="parentCode" />
+    <result column="g_name" property="name" />
+    <result column="g_count" property="count" />
+  </resultMap>
+
+  <select id="getOrderReportByParentWorkId" resultMap="baseOrderReportMap">
+        SELECT 
+            bu.work_id AS g_code,
+            bu.parent_work_id AS g_parent_code,
+            bu.username AS g_name,
+            SUM(IFNULL(bo.total_price, 0)) AS g_count
+        FROM b2b_user bu
+        LEFT JOIN b2b_order bo
+        ON bu.work_id = bo.created_by
+        AND bo.is_active = 1
+        <if test="page.params.startDate!=null and page.params.endDate!=null">and bo.create_date between #{page.params.startDate} and #{page.params.endDate}</if>
+        <if test="page.params.startDate!=null and page.params.endDate==null">and bo.create_date &gt; #{page.params.startDate}</if>
+        <if test="page.params.startDate==null and page.params.endDate!=null">and bo.create_date &lt; #{page.params.endDate}</if>
+        WHERE (bu.work_id = #{parentCode} OR
+            bu.parent_work_id = #{parentCode})
+			AND bu.is_active = 1
+		GROUP BY bu.work_id
+		ORDER BY g_code DESC
+  </select>
+
+  <select id="getOrderReportByDeptCode" resultMap="baseOrderReportMap">
+		SELECT 
+			bd.code AS g_code,
+			bd.parent_code AS g_parent_code,
+			bd.name AS g_name,
+			SUM(IFNULL(bo.total_price, 0)) AS g_count
+		FROM b2b_dept bd
+		LEFT JOIN b2b_user bu
+		ON bd.code = bu.dept_code
+        AND bu.is_active = 1
+		LEFT JOIN b2b_order bo
+		ON bu.work_id = bo.created_by
+        AND bo.is_active = 1
+        <if test="page.params.startDate!=null and page.params.endDate!=null">and bo.create_date between #{page.params.startDate} and #{page.params.endDate}</if>
+        <if test="page.params.startDate!=null and page.params.endDate==null">and bo.create_date &gt; #{page.params.startDate}</if>
+        <if test="page.params.startDate==null and page.params.endDate!=null">and bo.create_date &lt; #{page.params.endDate}</if>
+		WHERE bd.parent_code = #{parentCode}
+		    AND bd.is_active = 1
+		    AND bd.code != bd.parent_code
+		GROUP BY bd.code
+		ORDER BY g_code DESC
+  </select>
+  
+  <select id="getOrderReportByDeptTeam" resultMap="baseOrderReportMap">
+        SELECT 
+            bd.code AS g_code,
+            bd.parent_code AS g_parent_code,
+            bd.name AS g_name,
+            SUM(IFNULL(bo.total_price, 0)) AS g_count
+        FROM b2b_dept bd
+        LEFT JOIN b2b_user bu
+        ON bd.code = bu.dept_code
+        AND bu.is_active = 1
+        LEFT JOIN b2b_order bo
+        ON bu.work_id = bo.created_by
+        AND bo.is_active = 1
+        <if test="page.params.startDate!=null and page.params.endDate!=null">and bo.create_date between #{page.params.startDate} and #{page.params.endDate}</if>
+        <if test="page.params.startDate!=null and page.params.endDate==null">and bo.create_date &gt; #{page.params.startDate}</if>
+        <if test="page.params.startDate==null and page.params.endDate!=null">and bo.create_date &lt; #{page.params.endDate}</if>
+        WHERE bd.is_active = 1
+            AND bd.code != bd.parent_code
+            AND bd.can_sale = 1
+        GROUP BY bd.code
+        ORDER BY g_code DESC
+  </select>
+  
+  <select id="getOrderReportByDept" resultMap="baseOrderReportMap">
+        SELECT 
+            bd.code AS g_code,
+            bd.parent_code AS g_parent_code,
+            bd.name AS g_name,
+            SUM(IFNULL(bo.total_price, 0)) AS g_count
+        FROM b2b_dept bd
+        LEFT JOIN b2b_dept sbd
+        ON sbd.parent_code = bd.code
+        LEFT JOIN b2b_user bu
+        ON sbd.code = bu.dept_code
+        AND bu.is_active = 1
+        LEFT JOIN b2b_order bo
+        ON bu.work_id = bo.created_by
+        AND bo.is_active = 1
+        <if test="page.params.startDate!=null and page.params.endDate!=null">and bo.create_date between #{page.params.startDate} and #{page.params.endDate}</if>
+        <if test="page.params.startDate!=null and page.params.endDate==null">and bo.create_date &gt; #{page.params.startDate}</if>
+        <if test="page.params.startDate==null and page.params.endDate!=null">and bo.create_date &lt; #{page.params.endDate}</if>
+        WHERE bd.is_active = 1
+            AND bd.code = bd.parent_code
+            AND bd.can_sale = 1
+        GROUP BY bd.code
+        ORDER BY g_code DESC
+  </select>
+</mapper>

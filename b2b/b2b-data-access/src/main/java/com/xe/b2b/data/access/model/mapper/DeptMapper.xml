@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xe.b2b.data.access.dao.DeptDao">
+  <resultMap id="baseDeptMap" type="DeptEntity">
+    <id column="id" property="id" />
+    <result column="code" property="code" />
+    <result column="parent_code" property="parentCode" />
+    <result column="name" property="name" />
+    <result column="REMARKS" property="remark" />
+	<result column="is_active" property="isActive" />
+    <result column="can_sale" property="canSale" />
+	<result column="last_update" property="lastUpdate" />
+	<result column="updated_by" property="updatedBy" />
+  </resultMap>
+
+  <select id="selectByPrimaryKey" resultMap="baseDeptMap">
+      <![CDATA[
+       select *
+       from b2b_dept
+       where code = #{code} AND is_active = 1
+      ]]>
+  </select>
+  
+  <select id="selectAll" resultMap="baseDeptMap">
+      <![CDATA[
+       select *
+       from b2b_dept
+       where is_active = 1
+      ]]>
+  </select>
+  
+  <select id="selectAllParent" resultMap="baseDeptMap">
+      <![CDATA[
+       select *
+       from b2b_dept
+       where is_active = 1
+       AND code = parent_code
+      ]]>
+  </select>
+  
+  
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="DeptEntity"> 
+        <![CDATA[
+	        INSERT INTO `b2b_dept` (
+	         `code`, 
+	         `parent_code`,
+             `can_sale`, 
+	         `name`,
+	         `updated_by`
+	        )
+	        VALUES (
+	         #{code},
+	         #{parentCode},
+             #{canSale},
+	         #{name}, 
+	         #{updatedBy}
+	         )
+         ]]>
+    </insert>
+
+    <select id="selectByPage" resultMap="baseDeptMap">
+        SELECT  *
+        FROM b2b_dept
+        WHERE 1=1
+        <if test="params.deptName !=null ">AND name like CONCAT('%', #{params.deptName}, '%')</if>
+        ORDER BY id DESC
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="countByPage" resultType="java.lang.Integer">
+        select count(*)
+        FROM b2b_dept
+        WHERE 1=1
+        <if test="params.deptName !=null ">AND name like CONCAT('%', #{params.deptName}, '%')</if>
+    </select>
+    
+    <update id="isActiveByPrimaryKey" parameterType="DeptEntity" >
+        <![CDATA[
+	        update b2b_dept
+	        set is_active = #{isActive}
+	        where code = #{code}
+        ]]>
+    </update>
+   <delete id="deleteByPrimaryKey" parameterType="String">
+        <![CDATA[
+            delete from b2b_dept where id=#{id}
+        ]]>
+    </delete>
+</mapper>

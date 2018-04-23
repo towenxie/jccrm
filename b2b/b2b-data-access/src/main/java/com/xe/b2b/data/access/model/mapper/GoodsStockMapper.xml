@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xe.b2b.data.access.dao.GoodsStockDao">
+
+    <resultMap id="baseGoodsStockMap" type="GoodsStockEntity">
+        <id column="id" property="id" />
+        <result column="batch_number" property="batchNumber" />
+        <result column="goods_number" property="goodsNumber" />
+        <result column="stock_num" property="stockNum" />
+        <result column="save_days" property="saveDays" />
+        <result column="limit_days" property="limitDays" />
+        <result column="product_date" property="productDate" />
+        <result column="is_active" property="isActive" />
+        <result column="create_date" property="created" />
+        <result column="last_update" property="lastUpdate" />
+        <result column="created_by" property="createdBy" />
+        <result column="updated_by" property="updatedBy" />
+        <association column="goods_number" property="goodsName" select="com.xe.b2b.data.access.dao.GoodsDao.selectGoodsName"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="GoodsStockEntity"> 
+        <![CDATA[
+	        INSERT INTO `b2b_goods_stock` (
+	         `batch_number`, 
+	         `goods_number`, 
+	         `stock_num`,
+	         `save_days`,
+	         `limit_days`,
+	         `product_date`,
+	         `create_date`,
+	         `created_by`,
+	         `updated_by`
+	        )
+	        VALUES (
+	         #{batchNumber},
+	         #{goodsNumber}, 
+	         #{stockNum},
+	         #{saveDays},
+	         #{limitDays}, 
+	         #{productDate},
+	         #{created},
+	         #{createdBy},
+	         #{updatedBy}
+	         )
+         ]]>
+    </insert>
+
+    <select id="selectStockNum" resultType="java.lang.Integer">
+        SELECT sum(stock_num) FROM b2b_goods_stock
+        WHERE is_active=1
+        and goods_number = #{goodsNumber}
+    </select>
+    
+    <select id="selectByGoodsNumber" resultMap="baseGoodsStockMap">
+        SELECT * FROM b2b_goods_stock
+        WHERE is_active=1 AND `goods_number` = #{goodsNumber}
+        ORDER BY id
+    </select>
+
+    <select id="selectByPage" resultMap="baseGoodsStockMap">
+        SELECT * FROM b2b_goods_stock
+        WHERE 1 = 1
+	    <if test="params.batchNumber !=null and params.batchNumber !='' ">
+	        and batch_number = #{params.batchNumber}
+	    </if>
+	    <if test="params.goodsNumber !=null and params.goodsNumber !='' ">
+	        and goods_number = #{params.goodsNumber}
+	    </if>
+        ORDER BY id desc
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="countByPage" resultType="java.lang.Integer">
+        SELECT count(*) FROM b2b_goods_stock
+        WHERE 1 = 1
+	    <if test="params.batchNumber !=null and params.batchNumber !='' ">
+	        and batch_number = #{params.batchNumber}
+	    </if>
+	    <if test="params.goodsNumber !=null and params.goodsNumber !='' ">
+	        and goods_number = #{params.goodsNumber}
+	    </if>
+        ORDER BY id
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="baseGoodsStockMap">
+        <![CDATA[
+            SELECT *
+            FROM b2b_goods_stock
+            WHERE is_active = 1
+            and batch_number = #{id}
+        ]]>
+    </select>
+
+    <update id="updateByPrimaryKeySelective" parameterType="GoodsStockEntity" >
+        update b2b_goods_stock
+        <set>
+	        <if test="stockNum != null and stockNum !=0">
+	               stock_num = stock_num + #{stockNum}, 
+	        </if>
+	        <if test="updatedBy != null and updatedBy !=''">
+	              updated_by = #{updatedBy} , 
+	        </if>
+        </set>
+        where batch_number = #{batchNumber} and stock_num >= 0 and stock_num + #{stockNum} >= 0
+    </update>
+
+    <update id="isActiveByPrimaryKey" parameterType="GoodsStockEntity" >
+        <![CDATA[
+	        update b2b_goods_stock
+	        set is_active = #{isActive}
+	        where batch_number = #{batchNumber} AND is_active = 1
+        ]]>
+    </update>
+
+</mapper>
